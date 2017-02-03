@@ -33,7 +33,7 @@ namespace xiaoiceuwp
         //cookie
         public static SinaCookie sinacookie;
         //小冰的新浪微博userid，可以换成其他用户的userid，同样可以进行私信
-        const long xiaoiceid = 5175429989;
+        public static long xiaoiceid = 5175429989;
         public MainPage()
         {
             this.InitializeComponent();
@@ -50,7 +50,6 @@ namespace xiaoiceuwp
                 respondmsg.Text = respond;
                 return;
             }
-            await new MessageDialog("请手动登录").ShowAsync();
         }
         //获取对方私信回复
         private async void Button_Click_1(object sender, RoutedEventArgs e)
@@ -63,8 +62,6 @@ namespace xiaoiceuwp
                 respondmsg.Text = respond;
                 return;
             }
-            await new MessageDialog("请手动登录").ShowAsync();
-
         }
         //手动登录
         private async void Button_Click_3(object sender, RoutedEventArgs e)
@@ -174,7 +171,6 @@ namespace xiaoiceuwp
                 {
                     Windows.Storage.StorageFile cookie = await folder.GetFileAsync(filename);
                     string text = await Windows.Storage.FileIO.ReadTextAsync(cookie);
-                    await new MessageDialog(text).ShowAsync();
                     SinaCookie cookiefile = JsonConvert.DeserializeObject<SinaCookie>(text);
                     return cookiefile;
                 }

@@ -17,7 +17,6 @@ namespace xiaoiceuwp
         /// <summary>
         /// 用户名
         /// </summary>
-        /// c
         public string Username { get; set; }
 
         /// <summary>
@@ -108,8 +107,7 @@ namespace xiaoiceuwp
                 js += "function getpass(pwd,servicetime,nonce,rsaPubkey){var RSAKey=new sinaSSOEncoder.RSAKey();RSAKey.setPublic(rsaPubkey,'10001');var password=RSAKey.encrypt([servicetime,nonce].join('\\t')+'\\n'+pwd);return password;}";
                 ChakraHost host = new ChakraHost();
                 host.RunScript(js);
-                // CommunicationManager.
-                string sp = host.CallFunctionOverride("getpass", new object[] { pwd, servertime, nonce, pubkey });
+                string sp = host.CallFunctionReturnValue("getpass", new object[] { pwd, servertime, nonce, pubkey });
                 return sp;
             }
             catch (Exception ex)

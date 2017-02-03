@@ -92,7 +92,6 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <None Include="ChakraBridge.winmd" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -138,7 +137,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Interesting\JsBridge\src\ChakraBridge\ChakraBridge.csproj">
+    <ProjectReference Include="..\..\..\JsBridge\JsBridge\src\ChakraBridge\ChakraBridge.csproj">
       <Project>{57b3b22b-0405-411d-b620-bbe31c24f698}</Project>
       <Name>ChakraBridge</Name>
     </ProjectReference>

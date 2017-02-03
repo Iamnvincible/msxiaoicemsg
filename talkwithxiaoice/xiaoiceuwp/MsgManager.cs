@@ -24,7 +24,7 @@ namespace xiaoiceuwp
             Uri weibouri = new Uri("http://weibo.com");
             try
             {
-
+                //时间戳
                 var t = (DateTime.Now.Ticks - 621355968000000000) / 10000000;
 
                 string data = "ajwvr=6&__rnd=" + t + "&location=msgdialog&module=msgissue&style_id=1&text=" + msg + $"&uid={uid}&tovfids=&fids=&el=[object HTMLDivElement]&_t=0";
@@ -47,7 +47,7 @@ namespace xiaoiceuwp
                 request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
                 request.Headers.Add("Host", "weibo.com");
                 request.Headers.Add("Origin", "http://weibo.com");
-                request.Headers.Add("Referer", "http://weibo.com/message/history?uid=5175429989&name=%E5%B0%8F%E5%86%B0");
+                request.Headers.Add("Referer", $"http://weibo.com/message/history?uid={MainPage.xiaoiceid}&name=%E5%B0%8F%E5%86%B0");
                 request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36");
                 request.Headers.Add("X-Requested-With", "XMLHttpRequest");
                 //设置cookies
@@ -61,8 +61,8 @@ namespace xiaoiceuwp
                 cookieContainer.Add(weibouri, new Cookie(nameof(cookie._s_tentry), cookie._s_tentry, "/", weibourl));
                 cookieContainer.Add(weibouri, new Cookie(nameof(cookie.UOR), cookie.UOR, "/", weibourl));
                 var c = hc.SendAsync(request);
-                Task<string> respond = c.Result.Content.ReadAsStringAsync();
-                JObject result = JObject.Parse(respond.Result);
+                string respond =await c.Result.Content.ReadAsStringAsync();
+                JObject result = JObject.Parse(respond);
                 if (!result["code"].ToString().Equals("100000"))
                 {
                     await new MessageDialog(result["msg"].ToString()).ShowAsync();
@@ -76,7 +76,7 @@ namespace xiaoiceuwp
         }
         private static async Task<bool> TryGetMsg(SinaCookie cookie, long uid)
         {
-            string uri = "http://m.weibo.cn/msg/messages?uid=5175429989&page=1";
+            string uri = $"http://m.weibo.cn/msg/messages?uid={MainPage.xiaoiceid}&page=1";
             try
             {
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -85,12 +85,11 @@ namespace xiaoiceuwp
                 request.Headers.Add("Cache-Control", "max-age=0");
                 request.Headers.Add("Upgrade-Insecure-Requests", "1");
                 request.Headers.Add("X-Requested-With", "XMLHttpRequest");
-                request.Headers.Add("Referer", "http://m.weibo.cn/msg/chat?uid=5175429989");
+                request.Headers.Add("Referer", $"http://m.weibo.cn/msg/chat?uid={MainPage.xiaoiceid}");
                 request.Headers.Add("User-Agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1");
                 request.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
                 request.Headers.Add("Accept-Encoding", "gzip, deflate, sdch");
                 request.Headers.Add("Accept-Language", "zh-CN,zh;q=0.8,ko;q=0.6,en;q=0.4,zh-TW;q=0.2,fr;q=0.2");
-                request.Headers.TransferEncodingChunked = false;
                 var cookieContainer = new CookieContainer();
                 var handler = new HttpClientHandler()
                 {
@@ -101,11 +100,9 @@ namespace xiaoiceuwp
                 HttpClient hc = new HttpClient(handler);
                 var re = await hc.SendAsync(request);
                 Debug.WriteLine(re.StatusCode);
-                //2017年2月3日测试
                 var respond = await re.Content.ReadAsStringAsync();
                 if (respond != null)
                 {
-                    //await new MessageDialog(respond).ShowAsync();
                     string txt = respond;
                     JObject result = JObject.Parse(txt);
                     Debug.WriteLine(result["msg"]);
@@ -131,7 +128,8 @@ namespace xiaoiceuwp
 
         public static async Task<string> GetMsg(SinaCookie cookie, long uid)
         {
-            int retrycount = 5;
+            //尝试三次获取回复，每次间隔1秒
+            int retrycount = 3;
             bool getresult = false;
             while (!getresult && (retrycount-- > 0))
             {
