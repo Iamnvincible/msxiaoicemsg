@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -88,6 +89,7 @@ namespace xiaoiceuwp
                 request.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
                 request.Headers.Add("Accept-Encoding", "gzip, deflate, sdch");
                 request.Headers.Add("Accept-Language", "zh-CN,zh;q=0.8,ko;q=0.6,en;q=0.4,zh-TW;q=0.2,fr;q=0.2");
+                request.Headers.TransferEncodingChunked = false;
                 var cookieContainer = new CookieContainer();
                 var handler = new HttpClientHandler()
                 {
@@ -97,10 +99,17 @@ namespace xiaoiceuwp
                 HttpClient hc = new HttpClient(handler);
                 var re = await hc.SendAsync(request);
                 Debug.WriteLine(re.StatusCode);
-                var respond = re.Content.ReadAsStringAsync();
+                //2017年2月3日测试
+                var b = re.Content.Headers.ContentEncoding;
+                var st =await re.Content.ReadAsStreamAsync();
+                StreamReader sr = new StreamReader(st, Encoding.ASCII);
+                var strr = re.Content.ReadAsStringAsync().Result;
+                string respond = sr.ReadToEnd();
+                //var respond = re.Content.ReadAsStringAsync();
                 if (respond != null)
                 {
-                    string txt = respond.Result;
+                    await new MessageDialog(respond).ShowAsync();
+                    string txt = respond;
                     JObject result = JObject.Parse(txt);
                     Debug.WriteLine(result["msg"]);
                     if (result["ok"].ToString().Equals("1"))

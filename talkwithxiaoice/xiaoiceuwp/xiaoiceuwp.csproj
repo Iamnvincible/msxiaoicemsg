@@ -135,10 +135,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ChakraBridge, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\ChakraBridge.winmd</HintPath>
-    </Reference>
+    <ProjectReference Include="..\..\..\Interesting\JsBridge\src\ChakraBridge\ChakraBridge.csproj">
+      <Project>{57b3b22b-0405-411d-b620-bbe31c24f698}</Project>
+      <Name>ChakraBridge</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -37,7 +37,6 @@ namespace xiaoiceuwp
         public MainPage()
         {
             this.InitializeComponent();
-            //sinacookie = new SinaCookie();
         }
         //发送私信
         private async void Button_Click(object sender, RoutedEventArgs e)
@@ -89,6 +88,10 @@ namespace xiaoiceuwp
             //没有cookies文件
             if (file == null)
             {
+                if (sinacookie == null)
+                {
+                    sinacookie = new SinaCookie();
+                }
                 //显示登录对话框
                 ContentDialogResult result = await logindialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
@@ -171,6 +174,7 @@ namespace xiaoiceuwp
                 {
                     Windows.Storage.StorageFile cookie = await folder.GetFileAsync(filename);
                     string text = await Windows.Storage.FileIO.ReadTextAsync(cookie);
+                    await new MessageDialog(text).ShowAsync();
                     SinaCookie cookiefile = JsonConvert.DeserializeObject<SinaCookie>(text);
                     return cookiefile;
                 }

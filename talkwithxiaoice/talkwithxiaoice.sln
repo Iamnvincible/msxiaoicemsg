@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "talkwithxiaoice", "talkwith
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xiaoiceuwp", "xiaoiceuwp\xiaoiceuwp.csproj", "{EB19337E-CCA3-4445-970B-B3C77E4F7F51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChakraBridge", "..\..\Interesting\JsBridge\src\ChakraBridge\ChakraBridge.csproj", "{57B3B22B-0405-411D-B620-BBE31C24F698}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,22 @@ Global
 		{EB19337E-CCA3-4445-970B-B3C77E4F7F51}.Release|x86.ActiveCfg = Release|x86
 		{EB19337E-CCA3-4445-970B-B3C77E4F7F51}.Release|x86.Build.0 = Release|x86
 		{EB19337E-CCA3-4445-970B-B3C77E4F7F51}.Release|x86.Deploy.0 = Release|x86
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Debug|ARM.ActiveCfg = Debug|ARM
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Debug|ARM.Build.0 = Debug|ARM
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Debug|x64.ActiveCfg = Debug|x64
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Debug|x64.Build.0 = Debug|x64
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Debug|x86.ActiveCfg = Debug|x86
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Debug|x86.Build.0 = Debug|x86
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Release|ARM.ActiveCfg = Release|ARM
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Release|ARM.Build.0 = Release|ARM
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Release|x64.ActiveCfg = Release|x64
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Release|x64.Build.0 = Release|x64
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Release|x86.ActiveCfg = Release|x86
+		{57B3B22B-0405-411D-B620-BBE31C24F698}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
