@@ -31,7 +31,8 @@ namespace xiaoiceuwp
                 CookieContainer cookieContainer = new CookieContainer();
                 var handler = new HttpClientHandler()
                 {
-                    CookieContainer = cookieContainer
+                    CookieContainer = cookieContainer,
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
                 };
                 HttpClient hc = new HttpClient(handler);
 
@@ -93,22 +94,18 @@ namespace xiaoiceuwp
                 var cookieContainer = new CookieContainer();
                 var handler = new HttpClientHandler()
                 {
-                    UseCookies = false
+                    UseCookies = false,
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
                 };
                 request.Headers.Add("Cookie", $"SUB={cookie.SUB};wvr={cookie.wvr};UOR={cookie.UOR};_s_tentry={cookie._s_tentry};SSOLoginState={cookie.SSOLoginState};SUHB={cookie.SUHB};SUBP={cookie.SUBP};un={cookie.un};ALF={cookie.ALF};");
                 HttpClient hc = new HttpClient(handler);
                 var re = await hc.SendAsync(request);
                 Debug.WriteLine(re.StatusCode);
                 //2017年2月3日测试
-                var b = re.Content.Headers.ContentEncoding;
-                var st =await re.Content.ReadAsStreamAsync();
-                StreamReader sr = new StreamReader(st, Encoding.ASCII);
-                var strr = re.Content.ReadAsStringAsync().Result;
-                string respond = sr.ReadToEnd();
-                //var respond = re.Content.ReadAsStringAsync();
+                var respond = await re.Content.ReadAsStringAsync();
                 if (respond != null)
                 {
-                    await new MessageDialog(respond).ShowAsync();
+                    //await new MessageDialog(respond).ShowAsync();
                     string txt = respond;
                     JObject result = JObject.Parse(txt);
                     Debug.WriteLine(result["msg"]);
