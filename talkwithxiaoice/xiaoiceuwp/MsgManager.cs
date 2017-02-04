@@ -17,7 +17,7 @@ namespace xiaoiceuwp
     {
         private static string ans = "can not retrieve message";
 
-        public static async Task PostMsg(SinaCookie cookie, long uid, string msg = "happy new year")
+        public static async Task<bool> PostMsg(SinaCookie cookie, long uid, string msg = "happy new year")
         {
             string url = "http://weibo.com/aj/message/add";
             string weibourl = "weibo.com";
@@ -65,13 +65,15 @@ namespace xiaoiceuwp
                 JObject result = JObject.Parse(respond);
                 if (!result["code"].ToString().Equals("100000"))
                 {
-                    await new MessageDialog(result["msg"].ToString()).ShowAsync();
+                    await new MessageDialog(result["code"].ToString()+result["msg"].ToString()).ShowAsync();
+                    return false;
                 }
-
+                return true;
             }
             catch (Exception ex)
             {
                 await new MessageDialog(ex.Message).ShowAsync();
+                return false;
             }
         }
         private static async Task<bool> TryGetMsg(SinaCookie cookie, long uid)

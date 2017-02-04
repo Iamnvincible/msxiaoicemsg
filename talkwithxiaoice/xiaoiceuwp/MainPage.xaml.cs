@@ -45,10 +45,16 @@ namespace xiaoiceuwp
                 sinacookie = await GetCookieValue(false);
             if (sinacookie != null)
             {
-                await MsgManager.PostMsg(sinacookie, xiaoiceid, inputmsg.Text);
-                string respond = await MsgManager.GetMsg(sinacookie, xiaoiceid);
-                respondmsg.Text = respond;
-                return;
+                bool issendsuccess = await MsgManager.PostMsg(sinacookie, xiaoiceid, inputmsg.Text);
+                if (issendsuccess)
+                {
+                    string respond = await MsgManager.GetMsg(sinacookie, xiaoiceid);
+                    respondmsg.Text = respond;
+                }
+                else
+                {
+                    await new MessageDialog("cookie 过期或网络异常，请重新登录").ShowAsync();
+                }
             }
         }
         //获取对方私信回复
