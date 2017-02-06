@@ -105,6 +105,7 @@
     <Compile Include="MsgManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Respond.cs" />
+    <Compile Include="SimpleRespond.cs" />
     <Compile Include="SinaCookie.cs" />
     <Compile Include="WeiboLogin.cs" />
   </ItemGroup>

@@ -174,5 +174,11 @@ namespace xiaoiceuwp
         public string extension { get; set; }
         public string soundtime { get; set; }
         public string size { get; set; }
+        public string thumbnail_60 { get; set; }
+        public string thumbnail_100 { get; set; }
+        public string thumbnail_120 { get; set; }
+        public string thumbnail_240 { get; set; }
+        public string thumbnail_600 { get; set; }
     }
+
 }

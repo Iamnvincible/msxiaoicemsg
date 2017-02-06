@@ -9,13 +9,15 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Popups;
 
 namespace xiaoiceuwp
 {
     public class MsgManager
     {
-        private static string ans = "can not retrieve message";
+        private static SimpleRespond sr;
+
 
         public static async Task<bool> PostMsg(SinaCookie cookie, long uid, string msg = "happy new year")
         {
@@ -61,11 +63,11 @@ namespace xiaoiceuwp
                 cookieContainer.Add(weibouri, new Cookie(nameof(cookie._s_tentry), cookie._s_tentry, "/", weibourl));
                 cookieContainer.Add(weibouri, new Cookie(nameof(cookie.UOR), cookie.UOR, "/", weibourl));
                 var c = hc.SendAsync(request);
-                string respond =await c.Result.Content.ReadAsStringAsync();
+                string respond = await c.Result.Content.ReadAsStringAsync();
                 JObject result = JObject.Parse(respond);
                 if (!result["code"].ToString().Equals("100000"))
                 {
-                    await new MessageDialog(result["code"].ToString()+result["msg"].ToString()).ShowAsync();
+                    await new MessageDialog(result["code"].ToString() + result["msg"].ToString()).ShowAsync();
                     return false;
                 }
                 return true;
@@ -113,8 +115,26 @@ namespace xiaoiceuwp
                         var msg = JsonConvert.DeserializeObject<Respond>(txt);
                         if (msg.data[0].sender_id == uid)
                         {
+                            if (sr == null)
+                            {
+                                sr = new SimpleRespond();
+                            }
+                            sr.Message = msg.data[0].text;
+                            if (msg.data[0].text == "分享语音")
+                            {
+
+                                sr.Voice = msg.data[0].attachment[0].fid.ToString();
+                                //下载歌曲
+                                await DownloadVoice(hc, cookie, sr.Voice);
+                            }
+                            if (msg.data[0].text == "分享图片")
+                            {
+
+                                sr.Image = msg.data[0].attachment[0].thumbnail_600.ToString();
+                                await DownloadImg(hc, cookie, sr.Image);
+                            }
                             Debug.WriteLine(msg.data[0].text);
-                            ans = msg.data[0].text;
+                            sr.Message = msg.data[0].text;
                             return true;
                         }
                     }
@@ -128,7 +148,7 @@ namespace xiaoiceuwp
             }
         }
 
-        public static async Task<string> GetMsg(SinaCookie cookie, long uid)
+        public static async Task<SimpleRespond> GetMsg(SinaCookie cookie, long uid)
         {
             //尝试三次获取回复，每次间隔1秒
             int retrycount = 3;
@@ -138,8 +158,52 @@ namespace xiaoiceuwp
                 await Task.Delay(1024);
                 getresult = await TryGetMsg(cookie, uid);
             }
-            return ans;
+            return sr;
         }
+        private static async Task DownloadVoice(HttpClient hc, SinaCookie cookie, string url)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Host", "upload.api.weibo.com");
+            request.Headers.Add("Connection", "keep-alive");
+            request.Headers.Add("Cache-Control", "max-age=0");
+            request.Headers.Add("Upgrade-Insecure-Requests", "1");
+            request.Headers.Add("DNT", "1");
+            request.Headers.Add("Referer", $"http://weibo.com/message/history?uid={MainPage.xiaoiceid}");
+            request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393");
+            request.Headers.Add("Accept", "text/html, application/xhtml+xml, image/jxr, */*");
+            request.Headers.Add("Accept-Encoding", "gzip, deflate");
+            request.Headers.Add("Accept-Language", "zh-Hans-CN,zh-Hans;q=0.8,en-US;q=0.5,en;q=0.3");
+            request.Headers.Add("Cookie", $"SUB={cookie.SUB};wvr={cookie.wvr};UOR={cookie.UOR};_s_tentry={cookie._s_tentry};SSOLoginState={cookie.SSOLoginState};SUHB={cookie.SUHB};SUBP={cookie.SUBP};un={cookie.un};ALF={cookie.ALF};");
 
+            var re = await hc.SendAsync(request);
+            var respond = await re.Content.ReadAsByteArrayAsync();
+            var file=await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("ttsvoice.mp3", CreationCollisionOption.ReplaceExisting);
+            var openstream = await file.OpenStreamForWriteAsync();
+            await openstream.WriteAsync(respond, 0, respond.Length);
+            openstream.Dispose();
+        }
+        private static async Task DownloadImg(HttpClient hc, SinaCookie cookie, string url)
+        {
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+            request.Headers.Add("Host", "upload.api.weibo.com");
+            request.Headers.Add("Connection", "keep-alive");
+            request.Headers.Add("Cache-Control", "max-age=0");
+            request.Headers.Add("Upgrade-Insecure-Requests", "1");
+            request.Headers.Add("DNT", "1");
+            request.Headers.Add("Referer", $"http://weibo.com/message/history?uid={MainPage.xiaoiceid}");
+            request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393");
+            request.Headers.Add("Accept", "text/html, application/xhtml+xml, image/jxr, */*");
+            request.Headers.Add("Accept-Encoding", "gzip, deflate");
+            request.Headers.Add("Accept-Language", "zh-Hans-CN,zh-Hans;q=0.8,en-US;q=0.5,en;q=0.3");
+            request.Headers.Add("Cookie", $"SUB={cookie.SUB};wvr={cookie.wvr};UOR={cookie.UOR};_s_tentry={cookie._s_tentry};SSOLoginState={cookie.SSOLoginState};SUHB={cookie.SUHB};SUBP={cookie.SUBP};un={cookie.un};ALF={cookie.ALF};");
+
+            var re = await hc.SendAsync(request);
+            var cccc = re.Content.Headers.ContentDisposition;
+            var respond = await re.Content.ReadAsByteArrayAsync();
+            var file=await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("img.jpg", CreationCollisionOption.ReplaceExisting);
+            var openstream = await file.OpenStreamForWriteAsync();
+            await openstream.WriteAsync(respond, 0, respond.Length);
+            openstream.Dispose();
+        }
     }
 }

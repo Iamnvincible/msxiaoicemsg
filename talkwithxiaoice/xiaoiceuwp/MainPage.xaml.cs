@@ -20,6 +20,9 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Windows.Media.Playback;
+using Windows.Media.Core;
+using Windows.Graphics.Imaging;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -48,8 +51,9 @@ namespace xiaoiceuwp
                 bool issendsuccess = await MsgManager.PostMsg(sinacookie, xiaoiceid, inputmsg.Text);
                 if (issendsuccess)
                 {
-                    string respond = await MsgManager.GetMsg(sinacookie, xiaoiceid);
-                    respondmsg.Text = respond;
+                    SimpleRespond respond = await MsgManager.GetMsg(sinacookie, xiaoiceid);
+                    respondmsg.Text = respond.Message;
+                    await PlayVoiceorSetImage(respond.Message);
                 }
                 else
                 {
@@ -64,9 +68,57 @@ namespace xiaoiceuwp
                 sinacookie = await GetCookieValue(false);
             if (sinacookie != null)
             {
-                string respond = await MsgManager.GetMsg(sinacookie, xiaoiceid);
-                respondmsg.Text = respond;
-                return;
+                SimpleRespond respond = await MsgManager.GetMsg(sinacookie, xiaoiceid);
+                respondmsg.Text = respond.Message;
+                await PlayVoiceorSetImage(respond.Message);
+            }
+        }
+
+        private void Player_MediaEnded(MediaPlayer sender, object args)
+        {
+            sender.Dispose();
+        }
+        private async Task PlayVoiceorSetImage(string msg)
+        {
+            if (msg == "分享语音")
+            {
+                try
+                {
+
+                    MediaPlayer player = new MediaPlayer();
+                    var file = await Windows.Storage.ApplicationData.Current.LocalCacheFolder.GetFileAsync("ttsvoice.mp3");
+
+                    player.Source = MediaSource.CreateFromStorageFile(file);
+                    player.MediaEnded += Player_MediaEnded;
+                    player.Play();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    respondmsg.Text = "语音播放失败";
+                }
+            }
+            if (msg == "分享图片")
+            {
+                try
+                {
+                    var file = await Windows.Storage.ApplicationData.Current.LocalCacheFolder.GetFileAsync("img.jpg");
+                    var istream = await file.OpenAsync(Windows.Storage.FileAccessMode.Read);
+                    BitmapDecoder decoder = await BitmapDecoder.CreateAsync(istream);
+                    SoftwareBitmap softwarebitmap = await decoder.GetSoftwareBitmapAsync();
+                    if (softwarebitmap.BitmapPixelFormat != BitmapPixelFormat.Bgra8 || softwarebitmap.BitmapAlphaMode == BitmapAlphaMode.Straight)
+                    {
+                        softwarebitmap = SoftwareBitmap.Convert(softwarebitmap, BitmapPixelFormat.Bgra8, BitmapAlphaMode.Premultiplied);
+                    }
+                    var source = new SoftwareBitmapSource();
+                    await source.SetBitmapAsync(softwarebitmap);
+                    shareimg.Source = source;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    respondmsg.Text = "图片无法显示";
+                }
             }
         }
         //手动登录
@@ -185,6 +237,24 @@ namespace xiaoiceuwp
                     await new MessageDialog(ex.Message).ShowAsync();
                     return null;
                 }
+            }
+        }
+
+        private async void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                MediaPlayer player = new MediaPlayer();
+
+                await Task.Delay(1000);
+                var file = await Windows.Storage.KnownFolders.MusicLibrary.GetFileAsync("ttsvoice.mp3");
+                player.Source = MediaSource.CreateFromStorageFile(file);
+                player.Play();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
             }
         }
     }

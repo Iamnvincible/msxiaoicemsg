@@ -10,8 +10,8 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
         <ContentDialog Name="ct" Title="输入验证码" PrimaryButtonText="确定" SecondaryButtonText="取消"  >
             <StackPanel Margin="10">
@@ -28,10 +28,10 @@
         </ContentDialog>
         <Grid Grid.Row="0">
             <Grid.RowDefinitions>
-                <RowDefinition/>
-                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="Your text" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
+            <TextBlock Grid.Row="0" Text="Your text" Margin="10" HorizontalAlignment="Left"/>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="3*"/>
@@ -43,18 +43,22 @@
         </Grid>
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
-                <RowDefinition/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Text="Respond text" Margin="10" HorizontalAlignment="Left" VerticalAlignment="Bottom"/>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
-                <TextBox Name="respondmsg" Grid.Row="0" PlaceholderText="respond" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin=" 10"/>
+                <TextBox Name="respondmsg" Grid.Row="0" PlaceholderText="respond" VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin=" 10" TextWrapping="Wrap"/>
                 <Button Grid.Column="1" Content="retrieve" HorizontalAlignment="Stretch" MaxWidth="100" Margin="10" Click="Button_Click_1" VerticalAlignment="Top"/>
+                <Button Grid.Column="2" Content="play" HorizontalAlignment="Stretch" MaxWidth="100" Margin="10" Click="Button_Click_2" VerticalAlignment="Top"/>
             </Grid>
+            <Image Name="shareimg" MaxHeight="200" Grid.Row="2" Source="/Assets/WB_logo-x2.png" Stretch="Uniform" HorizontalAlignment="Stretch"/>
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
