@@ -245,12 +245,9 @@ namespace xiaoiceuwp
             try
             {
                 MediaPlayer player = new MediaPlayer();
-
-                await Task.Delay(1000);
-                var file = await Windows.Storage.KnownFolders.MusicLibrary.GetFileAsync("ttsvoice.mp3");
+                var file = await Windows.Storage.ApplicationData.Current.LocalCacheFolder.GetFileAsync("ttsvoice.mp3");
                 player.Source = MediaSource.CreateFromStorageFile(file);
                 player.Play();
-
             }
             catch (Exception ex)
             {
