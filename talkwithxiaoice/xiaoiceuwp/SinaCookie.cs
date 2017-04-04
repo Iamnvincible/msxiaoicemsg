@@ -11,9 +11,9 @@ namespace xiaoiceuwp
         //并无大碍
         //public string SINAGLOBAL;
         //固定值“6”
-        public string wvr;
+        //public string wvr;
         //用户名
-        public string un;
+        //public string un;
         ////十年不变,非必要
         //public string SCF;
         //重要，在POST的返回头set-cookies中获取
@@ -27,9 +27,12 @@ namespace xiaoiceuwp
         //在post的返回头set-cookies中获取
         public string SSOLoginState;
         //固定值login.sina.com.cn
-        public string _s_tentry;
+        //public string _s_tentry;
         //固定值login.sina.com.cn
-        public string UOR;
+        //public string UOR;
+        public string _T_WM;
+        public string SCF;
+
         ////并无大碍
         //public string Apache;
         ////并无大碍

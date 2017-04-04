@@ -52,6 +52,8 @@ namespace xiaoiceuwp
                 if (issendsuccess)
                 {
                     SimpleRespond respond = await MsgManager.GetMsg(sinacookie, xiaoiceid);
+                    if (respond == null)
+                        respond = new SimpleRespond();
                     respondmsg.Text = respond.Message;
                     await PlayVoiceorSetImage(respond.Message);
                 }
@@ -69,6 +71,8 @@ namespace xiaoiceuwp
             if (sinacookie != null)
             {
                 SimpleRespond respond = await MsgManager.GetMsg(sinacookie, xiaoiceid);
+                if (respond == null)
+                    respond = new SimpleRespond();
                 respondmsg.Text = respond.Message;
                 await PlayVoiceorSetImage(respond.Message);
             }
@@ -151,38 +155,42 @@ namespace xiaoiceuwp
                 ContentDialogResult result = await logindialog.ShowAsync();
                 if (result == ContentDialogResult.Primary)
                 {
-                    WeiboLogin wb = new WeiboLogin(account.Text, password.Password);
-                    SoftwareBitmapSource pinImage = await wb.Start();
-                    string loginresult = "登录失败";
-                    //需要验证码
-                    if (pinImage != null)
-                    {
-                        pinimg.Source = pinImage;//显示验证码
-                        //输入验证码
-                        ContentDialogResult ctresult = await ct.ShowAsync();
-                        if (ctresult == ContentDialogResult.Primary)
-                        {
-                            loginresult = await wb.End(pin.Text);//使用验证码登录
-                        }
-                        else
-                        {
-                            loginresult = "用户没有输入验证码，请重新登录";
-                        }
-                    }
-                    //不需要验证码
-                    else
-                    {
-                        loginresult = await wb.End(null);
-                    }
+                    //WeiboLogin wb = new WeiboLogin(account.Text, password.Password);
+                    Mweibologin wb = new Mweibologin(account.Text, password.Password);
+                    string loginresult = await wb.LoginAsync();
+                    //SoftwareBitmapSource pinImage = await wb.Start();
+                    //string loginresult = "登录失败";
+                    ////需要验证码
+                    //if (pinImage != null)
+                    //{
+                    //    pinimg.Source = pinImage;//显示验证码
+                    //    //输入验证码
+                    //    ContentDialogResult ctresult = await ct.ShowAsync();
+                    //    if (ctresult == ContentDialogResult.Primary)
+                    //    {
+                    //        loginresult = await wb.End(pin.Text);//使用验证码登录
+                    //    }
+                    //    else
+                    //    {
+                    //        loginresult = "用户没有输入验证码，请重新登录";
+                    //    }
+                    //}
+                    ////不需要验证码
+                    //else
+                    //{
+                    //    loginresult = await wb.End(null);
+                    //}
 
                     //登录结果判断
-                    if (loginresult == "0")
+                    if (loginresult == "200")
                     {
                         await new MessageDialog("登录成功！").ShowAsync();
-                        sinacookie.un = account.Text;
-                        sinacookie.wvr = "6";
-                        sinacookie._s_tentry = "login.sina.com.cn";
-                        sinacookie.UOR = "login.sina.com.cn";
+                        //sinacookie.un = account.Text;
+                        //sinacookie.wvr = "6";
+                        //sinacookie._s_tentry = "login.sina.com.cn";
+                        //sinacookie.UOR = "login.sina.com.cn";
+                        sinacookie._T_WM = "37bd0cf59fe89681339839225c2bb4d7";
+                        sinacookie.SCF = "AgNWq-vwodzezz_wenjZ2Y_ohsIl-Ri8pDBNo4nlBli4VdB9htXwYYQmOap96JTsAG8Ie3iRNeLLy82Nf1H6R5U.";
                         //将获得的cookies持久化到文件
                         try
                         {
