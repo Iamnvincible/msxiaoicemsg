@@ -1,5 +1,4 @@
-﻿using ChakraBridge;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -105,10 +104,10 @@ namespace xiaoiceuwp
                 string js = await FileIO.ReadTextAsync(file);
                 //自定义function进行加密
                 js += "function getpass(pwd,servicetime,nonce,rsaPubkey){var RSAKey=new sinaSSOEncoder.RSAKey();RSAKey.setPublic(rsaPubkey,'10001');var password=RSAKey.encrypt([servicetime,nonce].join('\\t')+'\\n'+pwd);return password;}";
-                ChakraHost host = new ChakraHost();
-                host.RunScript(js);
-                string sp = host.CallFunctionReturnValue("getpass", new object[] { pwd, servertime, nonce, pubkey });
-                return sp;
+                //ChakraHost host = new ChakraHost();
+               // host.RunScript(js);
+                //string sp = host.CallFunctionReturnValue("getpass", new object[] { pwd, servertime, nonce, pubkey });
+                return null;
             }
             catch (Exception ex)
             {
@@ -119,7 +118,7 @@ namespace xiaoiceuwp
         private async Task<CookieContainer> GetCookie(string door)
         {
             CookieContainer myCookieContainer = new CookieContainer();
-            string sp = await GetSP(Password, servertime, nonce, PUBKEY);//得到加密后的密码
+            string sp = null;//await GetSP(Password, servertime, nonce, PUBKEY);//得到加密后的密码
             string postData = "entry=weibo&gateway=1&from=&savestate=7&useticket=1&pagerefer=&vsnf=1&su=" + su
                             + "&service=miniblog&servertime=" + servertime
                             + "&nonce=" + nonce
@@ -161,8 +160,8 @@ namespace xiaoiceuwp
         }
         public async Task<string> End(string door)
         {
-            myCookies = await GetCookie(door);
-            return retcode;
+           // myCookies = await GetCookie(door);
+            return null;
 
         }
         public async Task<string> Get(string url)

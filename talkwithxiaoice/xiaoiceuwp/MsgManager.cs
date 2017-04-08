@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Popups;
@@ -17,17 +18,55 @@ namespace xiaoiceuwp
     public class MsgManager
     {
         private static SimpleRespond sr;
+        public static async Task<string> GetSt(SinaCookie sinacookie)
+        {
+            string url = "http://m.weibo.cn/msg/chat?uid={xiaoiceid}";
+            string weibourl = ".weibo.cn";
+            Uri weibouri = new Uri("http://m.weibo.cn");
+            CookieContainer cookieContainer = new CookieContainer();
+            var handler = new HttpClientHandler()
+            {
+                CookieContainer = cookieContainer,
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
+            HttpClient hc = new HttpClient(handler);
 
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
+
+            //设置请求头
+            request.Headers.Add("Accept", "application/json");
+            request.Headers.Add("Accept-Encoding", "gzip, deflate");
+            request.Headers.Add("Accept-Language", "zh-Hans-CN,zh-Hans;q=0.8,en-US;q=0.5,en;q=0.3");
+            request.Headers.Add("Connection", "keep-alive");
+            //request.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            request.Headers.Add("Host", "m.weibo.cn");
+            request.Headers.Add("DNT", "1");
+            request.Headers.Add("Origin", "http://m.weibo.cn");
+            request.Headers.Add("Referer", $"http://m.weibo.cn/msg/chat?uid={MainPage.xiaoiceid}");
+            request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063");
+            request.Headers.Add("X-Requested-With", "XMLHttpRequest");
+            //设置cookies
+            cookieContainer.Add(weibouri, new Cookie(nameof(sinacookie.SUB), sinacookie.SUB, "/", weibourl));
+            //cookieContainer.Add(weibouri, new Cookie(nameof(sinacookie.SUBP), sinacookie.SUBP, "/", weibourl));
+            cookieContainer.Add(weibouri, new Cookie(nameof(sinacookie.SUHB), sinacookie.SUHB, "/", weibourl));
+            cookieContainer.Add(weibouri, new Cookie(nameof(sinacookie.ALF), sinacookie.ALF, "/", weibourl));
+            cookieContainer.Add(weibouri, new Cookie(nameof(sinacookie.SSOLoginState), sinacookie.SSOLoginState, "/", weibourl));
+            var c = hc.SendAsync(request);
+            var html = await c.Result.Content.ReadAsStringAsync();
+            //用你的方法从html字符串中获取st的值
+            string str = "从html中找到我";
+            return str;
+        }
 
         public static async Task<bool> PostMsg(SinaCookie cookie, long uid, string msg = "happy new year")
         {
             string url = "http://m.weibo.cn/msgDeal/sendMsg?";
             string weibourl = ".weibo.cn";
             Uri weibouri = new Uri("http://m.weibo.cn");
+            string st = await GetSt(cookie);
             try
             {
-                //时间戳
-                string data = "fileId\":\"null\"" + $"&uid={uid}&content={msg}&st=830a09";
+                string data = "fileId\":\"null\"" + $"&uid={uid}&content={msg}&st={st}";
                 CookieContainer cookieContainer = new CookieContainer();
                 var handler = new HttpClientHandler()
                 {
